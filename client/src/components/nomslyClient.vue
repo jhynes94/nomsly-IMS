@@ -11,17 +11,20 @@
 
       <div class="row" v-for="meal in meals">
         <div class="col-lg-12 col-md-12 col-sm-6 text-center mb-4">
-          <h2>{{meal.name}}</h2>
+          <h1>{{meal.name}}</h1>
           <img v-bind:src="meal.imageLink" />
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4">
-          <img src="../assets/thumbs-up.png" alt="Mountain View">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-3 text-center mb-4">
+          <a href="#" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/thumbs-up.png" alt=""></a>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4">
-          <img src="../assets/OOS.jpg" alt="Mountain View">
+        <div class="col-lg-2 col-md-2 col-sm-2 text-center mb-4">
+          <a @click="Stock(meal)" class="btn btn-default">
+            <img  v-if="meal.quantity > 0" style="width: 100%; height: auto;" src="../assets/In-Stock.png" alt="">
+            <img  v-else style="width: 100%; height: auto;" src="../assets/OOS.jpg" alt="">
+          </a>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4">
-          <img src="../assets/thumbs-down.png" alt="Mountain View">
+        <div class="col-lg-2 col-md-2 col-sm-2 text-center mb-4">
+          <a href="#" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/thumbs-down.png" alt=""></a>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-6 text-center mb-4">
           <hr>
@@ -53,7 +56,8 @@ export default {
       Incorrect: "",
       Correct: "",
       producion: "No data",
-      apiURL: ""
+      apiURL: "",
+      stockImageURL: "../assets/OOS.jpg"
     };
   },
   methods: {
@@ -62,6 +66,16 @@ export default {
         console.log(response.body.meals);
         this.meals = response.body.meals
       });
+    },
+    Stock: function(meal){
+    if(meal.quantity > 0){
+      console.log("Out of Stock! quantity: " + meal.quantity);
+      meal.quantity = 0;
+    }
+    else {
+      console.log("In Stock! quantity: " + meal.quantity);
+      meal.quantity = 1;
+    }
     }
   },
   created: function() {
