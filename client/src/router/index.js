@@ -16,6 +16,11 @@ export default new Router({
       component: nomslyClient
     },
     {
+      path: '/client/:accountNumber',
+      name: 'nomslyClient',
+      component: nomslyClient
+    },
+    {
       path: '/NewQuestion',
       name: 'NewQuestion',
       component: NewQuestion

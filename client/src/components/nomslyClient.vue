@@ -2,34 +2,22 @@
   <div>
     <div class="col-lg-12">
 
-    <nav v-if="Correct != '' || Correct != ''" class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div v-if="Correct != ''" class="alert alert-success" role="alert">
-          {{ Correct }}
+      <nav v-if="Correct != '' || Correct != ''" class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+          <div v-if="Correct != ''" class="alert alert-success" role="alert">
+            {{ Correct }}
+          </div>
+          <div v-if="Incorrect != ''" class="alert alert-danger" role="alert">
+            {{ Incorrect }}
+          </div>
         </div>
-        <div v-if="Incorrect != ''" class="alert alert-danger" role="alert">
-          {{ Incorrect }}
-        </div>
-      </div>
-    </nav>
-
+      </nav>
 
       <!-- SPACER ROW -->
       <div class="row">
-        <div class="col-lg-12">
-          <h1 style="text-align: center;" class="my-4"></h1>
+        <div class="col-lg-12" style="height: 63px">
         </div>
       </div>
-      <div class="row">
-        <div class="col-lg-12">
-          <h1 style="text-align: center;" class="my-4"></h1>
-        </div>
-      </div>      
-            <div class="row">
-        <div class="col-lg-12">
-          <h1 style="text-align: center;" class="my-4"></h1>
-        </div>
-      </div>    
 
       
 
@@ -38,7 +26,7 @@
           <h1>{{meal.name}}</h1>
           <img v-bind:src="meal.imageLink" />
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-3 text-center mb-4">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-3 col-md-offset-3 text-center mb-4">
           <a @click="Vote('like')" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/thumbs-up.png" alt=""></a>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-2 text-center mb-4">
@@ -51,10 +39,9 @@
           <a @click="Vote('dislike')" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/thumbs-down.png" alt=""></a>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-6 text-center mb-4">
-          <hr>
+          <hr style="height: 7px">
         </div>
       </div>
-
 
       <div>{{producion}} server</div>
 
@@ -63,8 +50,6 @@
 </template>
 
 <script>
-import userNav from "./nav.vue";
-
 export default {
   name: "nomslyClient",
   data() {
@@ -74,15 +59,20 @@ export default {
       Correct: "",
       producion: "No data",
       apiURL: "",
-      stockImageURL: "../assets/OOS.jpg"
+      accountNumber: "",
     };
   },
   methods: {
     getMeals: function() {
-      this.$http.get(this.apiURL + "/meals").then(function(response) {
+      this.$http.get(this.apiURL + "/meals?account=" + this.accountNumber).then(function(response) {
         console.log(response.body.meals);
         this.meals = response.body.meals;
       });
+    },
+    clearAlerts: function(){
+      console.log("Clear Alerts")
+      this.Correct = "";
+      this.Incorrect = "";
     },
     Stock: function(meal) {
       if (meal.quantity > 0) {
@@ -96,12 +86,22 @@ export default {
       }
     },
     Vote: function(theVote) {
+      
+      // Send alerts
       if(theVote == 'like'){
         this.Correct = "We're glad you liked it!";
       }
       else if(theVote == 'dislike'){
         this.Correct = "We'll be sure to fix that for you";
       }
+
+      //Send to Server
+      this.$http
+        .post(this.apiURL + "/vote?account=" + this.accountNumber, {vote: theVote})
+        .then(function(response) {
+          console.log(response);
+      });
+
     },
   },
   created: function() {
@@ -109,10 +109,9 @@ export default {
     if (process.env.NODE_ENV === "development") {
       this.apiURL = "http://localhost:3000";
     }
+    console.log(this.$route.params.accountNumber);
+    this.accountNumber = this.$route.params.accountNumber
     this.getMeals();
-  },
-  components: {
-    userNav
   }
 };
 </script>

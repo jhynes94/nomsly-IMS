@@ -33,10 +33,16 @@ module.exports = function (app) {
     ];
 
     app.get('/meals', function (req, res) {
-
         var response = {
             "meals": meals
         };
         res.send(response)
+        console.log("Response sent to account: " + req.query.account)
     })
+
+    app.post("/vote", function (req, res) {
+        var msg = req.body.vote;
+        console.log("Account " + req.query.account + " Voted: " + msg);
+        res.send({ message: "vote recieved!" });
+    });
 };

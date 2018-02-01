@@ -1,6 +1,6 @@
 # trivia-Vue
 
-Trivia game to practice building Vue Frontend and NodeJS backend
+Nomsly's client and frontend for gaugeing customer interaction and manageing supply chain
 
 ## To Use
 
@@ -50,6 +50,7 @@ npm start
 
 - Support Mongo Backend localy
 - Support GraphQL
+- Remove console.log's when going into production mode
 
 ## License
 
