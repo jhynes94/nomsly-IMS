@@ -127,20 +127,20 @@ module.exports = function (app) {
         }
     ]
 
-    function gatherAccountMealData(accountNumber){
+    function gatherAccountMealData(accountNumber) {
 
-        let accountMeal = AccountDatabase.find(function (account){
+        let accountMeal = AccountDatabase.find(function (account) {
             console.log(account.id + "  " + parseInt(accountNumber))
             return account.id == parseInt(accountNumber);
         })
 
-        let accountMealNumbers =  accountMeal.mealNumbers;
+        let accountMealNumbers = accountMeal.mealNumbers;
 
         console.log(accountMealNumbers)
 
         let returnMeals = []
 
-        for(let i = 0; i < accountMealNumbers.length; i++){
+        for (let i = 0; i < accountMealNumbers.length; i++) {
             returnMeals = returnMeals.concat(meals[accountMealNumbers[i]])
             console.log(i)
         }
@@ -157,15 +157,32 @@ module.exports = function (app) {
 
     app.get('/meals', function (req, res) {
 
-        //default response 
-        if (req.query.account == "") {
+        //default response
+        if (req.query.account == "undefined" || req.query.account == "") {
+            console.log("default Call")
             res.send({ "meals": meals })
         }
 
-        //Response for account
+        //Search for account
         else {
-            let accountMealPlan = gatherAccountMealData(req.query.account)
-            res.send({ "meals": accountMealPlan })
+            try {
+                let accountMealPlan = gatherAccountMealData(req.query.account)
+                res.send({ "meals": accountMealPlan })
+            }
+            catch (error) {
+                console.log("ERROR! " + error)
+                console.log("Cannot find accountNumber")
+                res.send({
+                    "meals": [{
+                        id: 000000,
+                        name: "ACCOUNT NOT FOUND",
+                        imageLink: "",
+                        description: "",
+                        contents: "",
+                        quantity: 0
+                    }]
+                });
+            }
         }
     })
 
