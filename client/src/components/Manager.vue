@@ -1,6 +1,6 @@
 <template>
 <div>
-  <userNav />
+  <nomslyNav />
   <div class="container">
     <input type="text" v-model="formQuestion" class="form-control" placeholder="Question" aria-label="Username" aria-describedby="basic-addon1">
     <h1></h1>
@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import userNav from "./nav.vue";
+import nomslyNav from "./nomslyNav.vue";
 
 export default {
-  name: "NewQuestion",
+  name: "Manager",
   data() {
     return {
       formQuestion: "",
@@ -36,30 +36,15 @@ export default {
     };
   },
   methods: {
-    newQuestionSubmission: function() {
-      console.log("Submission");
-      var fakeAnswers = [
-        this.fromFAnswer1,
-        this.fromFAnswer2,
-        this.fromFAnswer3
-      ];
-      this.$http
-        .post("http://localhost:3000/newQuestion", {
-          question: this.formQuestion,
-          fakeAnswer: fakeAnswers,
-          trueAnswer: this.formAnswer
-        })
-        .then(function(response) {
-          console.log("Sent!");
-          this.$router.push("/question");
-        });
-    }
   },
   created: function() {
-    //this.getData();
+    this.producion = process.env.NODE_ENV;
+    if (process.env.NODE_ENV === "development") {
+      this.apiURL = "http://localhost:3000";
+    }
   },
   components: {
-    userNav
+    nomslyNav
   }
 };
 </script>
