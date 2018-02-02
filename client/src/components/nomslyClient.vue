@@ -24,10 +24,10 @@
       <div class="row" v-for="meal in meals">
         <div class="col-lg-12 col-md-12 col-sm-6 text-center mb-4">
           <h1>{{meal.name}}</h1>
-          <img v-bind:src="meal.imageLink" />
+          <img style="width: 407px; height: auto;" v-bind:src="meal.imageLink" />
         </div>
         <div class="col-lg-2 col-md-2 col-sm-2 col-lg-offset-3 col-md-offset-3 text-center mb-4">
-          <a @click="Vote('like')" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/thumbs-up.png" alt=""></a>
+          <a @click="Vote('like', meal)" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/thumbs-up.png" alt=""></a>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-2 text-center mb-4">
           <a @click="Stock(meal)" class="btn btn-default">
@@ -36,7 +36,7 @@
           </a>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-2 text-center mb-4">
-          <a @click="Vote('dislike')" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/thumbs-down.png" alt=""></a>
+          <a @click="Vote('dislike', meal)" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/thumbs-down.png" alt=""></a>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-6 text-center mb-4">
           <hr style="height: 7px">
@@ -84,8 +84,16 @@ export default {
         meal.quantity = 1;
         this.Correct = "";
       }
+
+      //Send to Server
+      this.$http
+        .post(this.apiURL + "/stocking?account=" + this.accountNumber, {meal: meal})
+        .then(function(response) {
+          console.log(response);
+      });
+
     },
-    Vote: function(theVote) {
+    Vote: function(theVote, meal) {
       
       // Send alerts
       if(theVote == 'like'){
@@ -97,7 +105,7 @@ export default {
 
       //Send to Server
       this.$http
-        .post(this.apiURL + "/vote?account=" + this.accountNumber, {vote: theVote})
+        .post(this.apiURL + "/vote?account=" + this.accountNumber, {vote: theVote, mealLiked: meal})
         .then(function(response) {
           console.log(response);
       });
