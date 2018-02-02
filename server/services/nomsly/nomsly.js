@@ -113,36 +113,37 @@ module.exports = function (app) {
         {
             id: 1,
             name: "Digital Lumens",
-            mealNumbers: [7, 8, 2]
+            mealNumbers: [7, 8, 2],
+            mealVotes: []
         },
         {
             id: 2,
             name: "Grove Labs",
-            mealNumbers: [1, 4, 12, 11]
+            mealNumbers: [1, 4, 12, 11],
+            mealVotes: []
         },
         {
             id: 3,
             name: "Oracle",
-            mealNumbers: [7, 8]
+            mealNumbers: [7, 8],
+            mealVotes: []
         }
     ]
 
     function gatherAccountMealData(accountNumber) {
 
         let accountMeal = AccountDatabase.find(function (account) {
-            console.log(account.id + "  " + parseInt(accountNumber))
             return account.id == parseInt(accountNumber);
         })
 
-        let accountMealNumbers = accountMeal.mealNumbers;
+        console.log(accountMeal.name + " id(" + parseInt(accountNumber) + ") Requested meal data")
 
-        console.log(accountMealNumbers)
+        let accountMealNumbers = accountMeal.mealNumbers;
 
         let returnMeals = []
 
         for (let i = 0; i < accountMealNumbers.length; i++) {
             returnMeals = returnMeals.concat(meals[accountMealNumbers[i]])
-            console.log(i)
         }
         return returnMeals;
     }
@@ -190,7 +191,31 @@ module.exports = function (app) {
         let msg = req.body;
         let now = moment()
         console.log("Account: " + req.query.account + " voted they " + req.body.vote + " " + req.body.mealLiked.name + " at " + now.format('YYYY-MM-DD HH:mm:ss Z'));
+
         res.send({ message: "Vote recieved!" });
+
+
+        //Add vote to system
+        try {
+            var accountNumber = req.query.account;
+            AccountDatabase.find(function (account) {
+                if (account.id == parseInt(accountNumber)) {
+                    account.mealVotes = account.mealVotes.concat([{
+                        name: account.name,
+                        vote: req.body.vote,
+                        mealVotedFor: req.body.mealLiked.name,
+                        time: now.format('YYYY-MM-DD HH:mm:ss Z')
+                    }])
+                }
+                return;
+            })
+        }
+        catch (error) {
+            console.log("ERROR! " + error)
+            console.log("Cannot find accountNumber")
+        }
+
+        console.log(AccountDatabase)
     });
 
     app.post("/stocking", function (req, res) {
