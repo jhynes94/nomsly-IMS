@@ -2,19 +2,21 @@
 <div>
   <nomslyNav />
   <div class="container">
-    <input type="text" v-model="formQuestion" class="form-control" placeholder="Question" aria-label="Username" aria-describedby="basic-addon1">
-    <h1></h1>
-    <input type="text" v-model="formAnswer" class="form-control" placeholder="Answer" aria-label="Username" aria-describedby="basic-addon1">
-    <h1></h1>
-    <input type="text" v-model="fromFAnswer1" class="form-control" placeholder="Fake Answer" aria-label="Username" aria-describedby="basic-addon1">
-    <h1></h1>
-    <input type="text" v-model="fromFAnswer2" class="form-control" placeholder="Fake Answer" aria-label="Username" aria-describedby="basic-addon1">
-    <h1></h1>
-    <input type="text" v-model="fromFAnswer3" class="form-control" placeholder="Fake Answer" aria-label="Username" aria-describedby="basic-addon1">
-    <h1></h1>
     <div class="row">
-      <div class="col-lg-12 col-sm-6 text-center mb-4">
-          <h3><button type="button" class="btn btn-primary" style="margin: 10px" @click="newQuestionSubmission()"><h3 style="margin: 10px">Submit</h3></button></h3>
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
+        <h1>Graph of Likes/Dislikes</h1>
+        <img src="https://cloud.addictivetips.com/wp-content/uploads/2009/12/Bar-Graphs.jpg" alt="">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
+        <h1>Table of likes</h1>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 text-center mb-4">
+        <h1>Likes</h1>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 text-center mb-4">
+        <h1>dislikes</h1>
       </div>
     </div>
   </div>
@@ -28,15 +30,10 @@ export default {
   name: "Manager",
   data() {
     return {
-      formQuestion: "",
-      formAnswer: "",
-      fromFAnswer1: "",
-      fromFAnswer2: "",
-      fromFAnswer3: ""
+      feedback: "",
     };
   },
-  methods: {
-  },
+  methods: {},
   created: function() {
     this.producion = process.env.NODE_ENV;
     if (process.env.NODE_ENV === "development") {
