@@ -19,10 +19,17 @@ npm run build
 # Install dependencies for server
 cd ../server
 npm install
+# Install background run tool to keep website alive
+sudo npm install pm2 -g
 # Start backend Server
-npm start
+pm2 start server.js
 # Access server at http://localhost:3000/
+# To Stop or Restart type:
+# pm2 stop server
+# pm2 restart server
 ```
+
+More about [pm2](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04)
 
 ## To Develop on system
 
