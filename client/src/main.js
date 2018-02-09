@@ -3,14 +3,15 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-//new
+
 require('../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss')
 import BootstrapVue from 'bootstrap-vue'
 Vue.use(BootstrapVue);
 
 import vueResource from 'vue-resource'
 Vue.use(vueResource)
-//end New 
+
+Vue.use(require('chartist-vuejs'))
 
 Vue.config.productionTip = false
 
