@@ -9,6 +9,14 @@
         <p></p>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
+        
+      </div>
+    </div>
+
+
     <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
         <h1>Table of likes/dislikes</h1>
@@ -34,6 +42,7 @@
 <script>
 import nomslyNav from "./nomslyNav.vue";
 
+
 export default {
   name: "Manager",
   data() {
@@ -45,6 +54,8 @@ export default {
       AllVotes: [],
       AllLikes: [],
       AllDislikes: [],
+
+
     };
   },
   methods: {

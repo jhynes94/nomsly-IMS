@@ -11,8 +11,6 @@ Vue.use(BootstrapVue);
 import vueResource from 'vue-resource'
 Vue.use(vueResource)
 
-Vue.use(require('vue-chartist'))
-
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

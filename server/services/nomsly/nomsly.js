@@ -114,19 +114,22 @@ module.exports = function (app) {
             id: 1,
             name: "Digital Lumens",
             mealNumbers: [7, 8, 2],
-            mealVotes: []
+            mealVotes: [],
+            stockWarning: []
         },
         {
             id: 2,
             name: "Grove Labs",
             mealNumbers: [1, 4, 12, 11],
-            mealVotes: []
+            mealVotes: [],
+            stockWarning: []
         },
         {
             id: 3,
             name: "Oracle",
             mealNumbers: [7, 8],
-            mealVotes: []
+            mealVotes: [],
+            stockWarning: []
         }
     ]
 
@@ -220,7 +223,31 @@ module.exports = function (app) {
 
     app.post("/stocking", function (req, res) {
         let meal = req.body.meal;
+        let now = moment()
         console.log("Account " + req.query.account + " has " + meal.quantity + " stock of: " + meal.name);
         res.send({ message: "Stocking notice recieved!" });
+
+
+        //Add vote to system
+        try {
+            var accountNumber = req.query.account;
+            AccountDatabase.find(function (account) {
+                if (account.id == parseInt(accountNumber)) {
+                    account.stockWarning = account.stockWarning.concat([{
+                        name: account.name,
+                        meal: meal.name,
+                        mealQuantity: meal.quantity,
+                        time: now.format('YYYY-MM-DD HH:mm:ss Z')
+                    }])
+                }
+                return;
+            })
+        }
+        catch (error) {
+            console.log("ERROR! " + error)
+            console.log("Cannot find accountNumber")
+        }
+
+        console.log(AccountDatabase)
     });
 };
