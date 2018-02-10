@@ -28,6 +28,21 @@
       </div>
     </div>
 
+  <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
+        <h1>Current Accounts</h1>
+      </div>
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4"  v-for="account in currentAccounts">
+        <h3>{{account.name}}</h3>
+      </div>
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4"  v-if="currentAccounts.length == 0">
+        <h3 style="color: green;">There are no accounts!!!</h3>
+      </div>
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
+        <hr>
+      </div>
+    </div>
+
     <div class="row">
       <h1>Current Meal options</h1>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4" v-for="meal in currentMeals">
