@@ -1,6 +1,6 @@
-# vue-project-youtube
+# nomsly-IMS
 
-> A Vue.js project
+> Nomsly Inventory Management System (IMS)
 
 ## Build Setup
 

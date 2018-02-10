@@ -87,6 +87,8 @@ export default {
         console.log("Current Meals avaible");
         console.log(response.body.meals);
         this.currentMeals = response.body.meals;
+
+        this.getAccounts();
       });
     },
     getAccounts: function() {
@@ -121,14 +123,20 @@ export default {
         MealLabels = MealLabels.concat(this.currentMeals[i].name);
       }
 
+      //Create array of current meals IDs
+      var MealIDs = [];
+      for(let i=0; i < this.currentMeals.length; i++){
+        MealIDs = MealIDs.concat(this.currentMeals[i].id);
+      }
+
       //Create array of likes that matchs meal locations
-      var allLikes = new Array(MealLabels.length).fill(0);
-      var allDislikes = new Array(MealLabels.length).fill(0);
+      var allLikes = new Array(MealIDs.length).fill(0);
+      var allDislikes = new Array(MealIDs.length).fill(0);
       //For all votes
       for(let i=0; i < this.AllVotes.length; i++){
         //Find matching meal
-        for(let j=0; j < MealLabels.length; j++){
-          if(this.AllVotes[i].mealVotedFor == MealLabels[j]) {
+        for(let j=0; j < MealIDs.length; j++){
+          if(this.AllVotes[i].mealVotedForID == MealIDs[j]) {
             //Match!
             if(this.AllVotes[i].vote == "like"){
               allLikes[j]++;
@@ -165,7 +173,6 @@ export default {
     this.accountNumber = this.$route.params.accountNumber
 
     this.getMeals();
-    this.getAccounts();
   },
   components: {
     nomslyNav,
