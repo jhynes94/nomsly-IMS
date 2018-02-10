@@ -5,14 +5,9 @@
     <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
         <h1>Graph of Likes/Dislikes</h1>
-        <img src="https://cloud.addictivetips.com/wp-content/uploads/2009/12/Bar-Graphs.jpg" alt="">
+        <line-example></line-example>
+        <bar-example></bar-example>
         <p></p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
-        
       </div>
     </div>
 
@@ -41,6 +36,8 @@
 
 <script>
 import nomslyNav from "./nomslyNav.vue";
+import LineExample from './LineChart.js'
+import BarExample from './BarChart.js'
 
 
 export default {
@@ -92,7 +89,9 @@ export default {
     this.getAccounts();
   },
   components: {
-    nomslyNav
+    nomslyNav,
+    LineExample,
+    BarExample
   }
 };
 </script>
