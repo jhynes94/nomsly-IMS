@@ -228,17 +228,29 @@ module.exports = function (app) {
         res.send({ message: "Stocking notice recieved!" });
 
 
-        //Add vote to system
+        //Add/remove stocking warning
         try {
             var accountNumber = req.query.account;
             AccountDatabase.find(function (account) {
                 if (account.id == parseInt(accountNumber)) {
-                    account.stockWarning = account.stockWarning.concat([{
-                        name: account.name,
-                        meal: meal.name,
-                        mealQuantity: meal.quantity,
-                        time: now.format('YYYY-MM-DD HH:mm:ss Z')
-                    }])
+                    //Remove from warnings if quantity is greater than 1
+                    if(meal.quantity >= 1){
+                        for(let i =0; i < account.stockWarning.length; i++){
+                            if(account.stockWarning[i].meal == meal.name){
+                                console.log("Removed from warnings");
+                                account.stockWarning.splice(i, 1)
+                            }
+                        }
+                    }
+                    //Add to warnings
+                    else {
+                        account.stockWarning = account.stockWarning.concat([{
+                            name: account.name,
+                            meal: meal.name,
+                            mealQuantity: meal.quantity,
+                            time: now.format('YYYY-MM-DD HH:mm:ss Z')
+                        }])
+                    }
                 }
                 return;
             })
