@@ -18,7 +18,8 @@
         <h1>Warnings</h1>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4"  v-for="warning in AllWarnings">
-        <h3 style="color: red;"><b>{{warning.meal}}</b> is out of stock for <b>{{warning.name}}</b></h3>
+        <h3 style="color: red;"><b>{{warning.meal}}</b> is out of stock for <b>{{warning.name}}</b><a @click="removeWarning(warning)" class="btn btn-default glyphicon glyphicon-remove" style="color: red;"></a></h3>
+        <h4>{{warning.time}}</h4>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4"  v-if="AllWarnings.length == 0">
         <h3 style="color: green;">No warnings at this time</h3>
@@ -33,7 +34,7 @@
         <h1>Current Accounts</h1>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4"  v-for="account in currentAccounts">
-        <h3>{{account.name}}</h3>
+        <h3>{{account.name}} <a @click="" class="btn btn-default glyphicon glyphicon-pencil"></a></h3>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4"  v-if="currentAccounts.length == 0">
         <h3 style="color: green;">There are no accounts!!!</h3>
@@ -46,7 +47,7 @@
     <div class="row">
       <h1>Current Meal options</h1>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4" v-for="meal in currentMeals">
-        <p>{{meal.name}}</p>
+        <p>{{meal.name}} <a @click="" class="btn btn-default glyphicon glyphicon-pencil"></a></p>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
         <hr>
@@ -78,9 +79,7 @@
 
 <script>
 import nomslyNav from "./nomslyNav.vue";
-import LineExample from './LineChart.js'
-import BarExample from './BarChart.js'
-import LineChart2 from './LineChart2.js'
+import LineChart2 from './LineChart2.js';
 
 
 export default {
@@ -115,6 +114,7 @@ export default {
           this.currentAccounts = response.body.accounts;
 
           //Gather all votes
+          this.AllVotes = [];
           for(let i=0; i < this.currentAccounts.length; i++){
             this.AllVotes = this.AllVotes.concat(this.currentAccounts[i].mealVotes);
           }
@@ -123,6 +123,7 @@ export default {
           this.generateChartData();
 
           //Gather all Warnings
+          this.AllWarnings = [];
           for(let i=0; i < this.currentAccounts.length; i++){
             this.AllWarnings = this.AllWarnings.concat(this.currentAccounts[i].stockWarning);
           }
@@ -130,6 +131,37 @@ export default {
           console.log(this.AllWarnings)
 
         });
+    },
+    updateAccount: function(inputAccount) {
+
+      this.$http
+        .post(this.apiURL + "/updateAccount", {account: inputAccount})
+        .then(function(response) {
+          console.log(response);
+          this.getAccounts();
+      });
+    },
+    removeWarning: function(inputWarning) {
+      //Find account
+      let editedAccount = this.currentAccounts.find(function (account) {
+          if (account.id == inputWarning.accountId) {
+            //Find inputWarning
+            for(let i = 0; i < account.stockWarning.length; i++){
+              if(account.stockWarning.time = inputWarning.time){
+                console.log("matching time!")
+                account.stockWarning.splice(i, 1);
+                break;
+              }
+            }
+          return account;
+          }
+      })
+
+      console.log("ASD")
+      console.log(editedAccount)
+      
+      this.updateAccount(editedAccount);
+      
     },
     generateChartData: function() {
       //Create array of current meals
@@ -164,19 +196,19 @@ export default {
       }
 
       this.ChartData = {
-      labels: MealLabels,
-      datasets: [
-        {
-          label: 'Likes',
-          backgroundColor: '#05CBE1',
-          data: allLikes
-        },{
-          label: 'Dislikes',
-          backgroundColor: '#FC2525',
-          data: allDislikes
-        }
-      ]
-    };
+        labels: MealLabels,
+        datasets: [
+          {
+            label: 'Likes',
+            backgroundColor: '#05CBE1',
+            data: allLikes
+          },{
+            label: 'Dislikes',
+            backgroundColor: '#FC2525',
+            data: allDislikes
+          }
+        ]
+      };
       
     }
   },
@@ -191,8 +223,6 @@ export default {
   },
   components: {
     nomslyNav,
-    LineExample,
-    BarExample,
     LineChart2
   }
 };

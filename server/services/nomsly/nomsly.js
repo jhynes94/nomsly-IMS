@@ -249,12 +249,42 @@ module.exports = function (app) {
                     else {
                         account.stockWarning = account.stockWarning.concat([{
                             name: account.name,
+                            accountId: account.id,
                             meal: meal.name,
                             mealID: meal.id,
                             mealQuantity: meal.quantity,
                             time: now.format('YYYY-MM-DD HH:mm:ss Z')
                         }])
                     }
+                }
+                return;
+            })
+        }
+        catch (error) {
+            console.log("ERROR! " + error)
+            console.log("Cannot find accountNumber")
+        }
+
+        console.log(AccountDatabase)
+    });
+
+
+
+    app.post("/updateAccount", function (req, res) {
+        let msg = req.body;
+        let now = moment()
+        console.log("Account: " + msg.account.id + " Will be updated");
+
+        res.send({ message: "Update recieved" });
+
+        //Add vote to system
+        try {
+            AccountDatabase.find(function (account) {
+                if (account.id == parseInt(msg.account.id)) {
+                    account.name = msg.account.name
+                    account.mealNumbers = msg.account.mealNumbers
+                    account.mealVotes = msg.account.mealVotes
+                    account.stockWarning = msg.account.stockWarning
                 }
                 return;
             })
