@@ -16,11 +16,11 @@
     
     <div class="row">
       <div v-if="currentAccounts != null" class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
-        <h1><input type="text" name="name" :placeholder="currentAccounts[0].name" :value="currentAccounts[0].name"></h1>
+        <h1><input v-model="currentAccounts[0].name" :placeholder="AccountName"></h1>
+        <a @click="updateAccount(currentAccounts[0])" class="btn btn-primary">Update</a>
       </div>
       
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
-        <a @click="updateAccount(currentAccounts[0])" class="btn btn-primary">Update</a>
         <hr>
       </div>
     </div>
@@ -90,6 +90,7 @@ export default {
       AllVotes: [],
       AllWarnings: [],
       ChartData: {},
+      AccountName: "",
       accountNumber: 0
     };
   },
@@ -134,6 +135,8 @@ export default {
             return account;
           }
         });
+
+        this.AccountName = this.currentAccounts[0].name;
 
         //Gather all votes
         this.AllVotes = [];
@@ -221,7 +224,6 @@ export default {
     }
     this.accountNumber = this.$route.params.accountNumber;
 
-    //////////////////////////////////////////
     this.getMeals();
   },
   components: {
