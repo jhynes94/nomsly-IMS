@@ -16,10 +16,12 @@
     
     <div class="row">
       <div v-if="currentAccounts != null" class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
-        <h1><input v-model="currentAccounts[0].name" :placeholder="AccountName"></h1>
+        <h1><input style="text-align: center;" v-model="currentAccounts[0].name" :placeholder="AccountName"></h1>
         <a @click="updateAccount(currentAccounts[0])" class="btn btn-primary">Update</a>
       </div>
-      
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
+        <h3><router-link class="btn btn-default" :to="'/client/' + accountNumber"><a>View Account as Client</a></router-link></h3>
+      </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
         <hr>
       </div>
@@ -46,8 +48,10 @@
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4" v-for="meal in currentMeals">
         <p>{{meal.name}} <a @click="removeMeal(meal)" class="btn btn-default glyphicon glyphicon-remove" style="color: red;"></a></p>
       </div>
+      <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4" v-for="meal in notCurrentMeals">
+        <p>{{meal.name}} <a @click="addMealToAccount(meal)" class="btn btn-default glyphicon glyphicon-plus" style="color: green;"></a></p>
+      </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
-        <a @click="addMeal()" class="btn btn-primary glyphicon glyphicon-plus"></a>
         <hr>
       </div>
     </div>
@@ -68,9 +72,6 @@
     </div>
 
     
-
-
-    
   </div>
 </div>
 </template>
@@ -86,6 +87,7 @@ export default {
       apiURL: "",
       feedback: "",
       currentMeals: null,
+      notCurrentMeals: null,
       currentAccounts: null,
       AllVotes: [],
       AllWarnings: [],
@@ -95,14 +97,38 @@ export default {
     };
   },
   methods: {
+    getOtherMeals: function() {
+      this.$http.get(this.apiURL + "/meals?account=").then(function(response) {
+        let notCurrentMeals = response.body.meals
+        console.log("Current Meals NOT available");
+        console.log(notCurrentMeals);
+
+        let listToRemove = [];
+
+        for(let i=0; i < notCurrentMeals.length; i++){
+          for(let j=0; j < this.currentMeals.length; j++){
+            if(notCurrentMeals[i].id == this.currentMeals[j].id){
+              listToRemove = listToRemove.concat([i])
+            }
+          }
+        }
+        
+        for(let i = 0; i < listToRemove.length; i++){
+          notCurrentMeals.splice(listToRemove[i] - i, 1);
+        }
+
+        this.notCurrentMeals = notCurrentMeals;
+      });
+    },
     getMeals: function() {
       this.$http
         .get(this.apiURL + "/meals?account=" + this.accountNumber)
         .then(function(response) {
-          console.log("Current Meals available");
+          console.log("All meals!");
           console.log(response.body.meals);
           this.currentMeals = response.body.meals;
 
+          this.getOtherMeals();
           this.getAccounts();
         });
     },
@@ -159,6 +185,29 @@ export default {
           }
         }
       });
+    },
+    addMealToAccount: function(meal) {
+      this.currentAccounts[0].mealNumbers = this.currentAccounts[0].mealNumbers.concat([meal.id]);
+      this.updateAccount(this.currentAccounts[0])
+      setTimeout(() => {this.getMeals()}, 100);
+    },
+    removeMeal: function(meal) {
+          console.log(this.currentAccounts[0].mealNumbers)
+          console.log("ASD")
+      this.currentAccounts[0].mealNumbers = this.currentAccounts[0].mealNumbers.filter(e => e !== meal.id);
+          console.log(this.currentAccounts[0].mealNumbers)
+      
+      /*for(let i=0; this.currentAccounts[0].mealNumbers; i++){
+        if(this.currentAccounts[0].mealNumbers[i] == meal.id){
+          console.log("Removing " + i + " VS " + meal.id)
+          console.log(this.currentAccounts[0].mealNumbers)
+          this.currentAccounts[0].mealNumbers = this.currentAccounts[0].mealNumbers.splice(i, 1);
+          console.log(this.currentAccounts[0].mealNumbers)
+          break;
+        }
+      }*/
+      this.updateAccount(this.currentAccounts[0]);
+      setTimeout(() => {this.getMeals()}, 100);
     },
     updateAccount: function(inputAccount) {
       console.log(inputAccount.name);

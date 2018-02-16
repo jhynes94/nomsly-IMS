@@ -153,12 +153,49 @@ module.exports = function (app) {
         return returnMeals;
     }
 
+    app.get("/getMeal", function (req, res) {
+        console.log("Getting Meal: " + req.query.mealId);
+
+        //Add vote to system
+        try {
+            var mealNumber = req.query.mealId;
+            meals.find(function (meal) {
+                if (meal.id == parseInt(mealNumber)) {
+                    return res.send({ meal: meal});
+                }
+            })
+        }
+        catch (error) {
+            console.log("ERROR! " + error)
+            console.log("Cannot find MealNumber")
+        }
+
+    });
+
     app.get('/CurrentMealOfferings', function (req, res) {
         res.send({ "meals": meals })
     })
 
-    app.get('/CurrentAccounts', function (req, res) {
-        res.send({ "accounts": AccountDatabase })
+    app.post("/newMeal", function (req, res) {
+        let msg = req.body;
+        let meal;
+        let newID = Math.floor(100000000 + Math.random() * 900000000);
+        if(msg.meal == null){
+            meal = {
+                id: newID,
+                name: "New Meal",
+                imageLink: "",
+                description: "",
+                contents: "",
+                quantity: 1
+            };
+        }
+        else {
+            meal = msg.meal;
+            newID = msg.meal.id;
+        }
+        meals = meals.concat([meal]);
+        res.send({ "id": newID })
     })
 
     app.get('/meals', function (req, res) {
@@ -191,6 +228,33 @@ module.exports = function (app) {
             }
         }
     })
+
+    app.post("/updateMeal", function (req, res) {
+        let msg = req.body;
+        console.log("Meal: " + msg.meal.id + " Will be updated");
+
+        res.send({ message: "Update recieved" });
+
+        //Add vote to system
+        try {
+            meals.find(function (meal) {
+                if (meal.id == parseInt(msg.meal.id)) {
+                    meal.name = msg.meal.name
+                    meal.imageLink = msg.meal.imageLink
+                    meal.description = msg.meal.description
+                    meal.contents = msg.meal.contents
+                    meal.quantity = msg.meal.quantity
+                }
+                return;
+            })
+        }
+        catch (error) {
+            console.log("ERROR! " + error)
+            console.log("Cannot find mealNumber")
+        }
+
+        console.log(meals)
+    });
 
     app.post("/vote", function (req, res) {
         let msg = req.body;
@@ -268,6 +332,31 @@ module.exports = function (app) {
         console.log(AccountDatabase)
     });
 
+    app.get('/CurrentAccounts', function (req, res) {
+        res.send({ "accounts": AccountDatabase })
+    })
+
+    app.post("/newAccount", function (req, res) {
+        let msg = req.body;
+        let account;
+        let newID = Math.floor(100000000 + Math.random() * 900000000);
+        if(msg.account == null){
+            account = {
+                id: newID,
+                name: "New Account Name",
+                mealNumbers: [],
+                mealVotes: [],
+                stockWarning: []
+            };
+        }
+        else {
+            account = msg.account;
+            newID = msg.account.id;
+        } 
+
+        AccountDatabase = AccountDatabase.concat([account]);
+        res.send({ "id": newID })
+    })
 
 
     app.post("/updateAccount", function (req, res) {

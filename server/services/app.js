@@ -4,10 +4,6 @@ module.exports = function (app) {
     var basicModels = require("./basicModels.js");
     basicModels(app);
 
-    //trivia game
-    var triviaModels = require("./trivia/trivia.js");
-    triviaModels(app);
-
     //Nomsly
     var nomslyModels = require("./nomsly/nomsly.js");
     nomslyModels(app);

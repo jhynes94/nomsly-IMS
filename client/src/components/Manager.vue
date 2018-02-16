@@ -40,7 +40,7 @@
         <h3 style="color: green;">There are no accounts!!!</h3>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
-        <a @click="addAccount()" class="btn btn-primary glyphicon glyphicon-plus"></a>
+        <a @click="newAccount()" class="btn btn-primary glyphicon glyphicon-plus"></a>
         <hr>
       </div>
     </div>
@@ -48,10 +48,10 @@
     <div class="row">
       <h1>Current Meal options</h1>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4" v-for="meal in currentMeals">
-        <p>{{meal.name}} <a @click="" class="btn btn-default glyphicon glyphicon-pencil"></a></p>
+        <p>{{meal.name}} <router-link class="btn btn-default glyphicon glyphicon-pencil" :to="'/editMeal/' + meal.id"><a></a></router-link></p>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
-        <a @click="addMeal()" class="btn btn-primary glyphicon glyphicon-plus"></a>
+        <a @click="newMeal()" class="btn btn-primary glyphicon glyphicon-plus"></a>
         <hr>
       </div>
     </div>
@@ -159,6 +159,22 @@ export default {
       })      
       this.updateAccount(editedAccount);
       
+    },
+    newAccount: function() {
+      this.$http
+        .post(this.apiURL + "/newAccount", {account: null})
+        .then(function(response) {
+          console.log("New Account ID: " + response.body.id);
+          this.$router.push("/editAccount/" + response.body.id)
+      });
+    },
+    newMeal: function() {
+      this.$http
+        .post(this.apiURL + "/newMeal", {meal: null})
+        .then(function(response) {
+          console.log("New Meal ID: " + response.body.id);
+          this.$router.push("/editMeal/" + response.body.id)
+      });
     },
     generateChartData: function() {
       //Create array of current meals
