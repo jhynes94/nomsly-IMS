@@ -131,7 +131,6 @@ export default {
           }
           console.log("All Warnings")
           console.log(this.AllWarnings)
-
         });
     },
     updateAccount: function(inputAccount) {

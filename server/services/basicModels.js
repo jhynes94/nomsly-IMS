@@ -1,7 +1,5 @@
 module.exports = function (app) {
 
-    //If I determine not to use Mongoose, you can post things to the database like such
-
     //Setup Mongo DB
     const MongoClient = require('mongodb').MongoClient
     var db
@@ -33,8 +31,9 @@ module.exports = function (app) {
         var cursor = db.collection('quotes').find()
 
         db.collection('quotes').find().toArray(function (err, results) {
-            console.log(results)
-            // send HTML file populated with quotes here
+            console.log(results[0])
+            res.send({ "meals": results[0] })
+            // send HTML file populated with quotes herey
         })
     })
 };

@@ -1,5 +1,19 @@
 module.exports = function (app) {
     const moment = require('moment')
+    
+    //Setup Mongo DB
+    const MongoClient = require('mongodb').MongoClient
+    var db
+    const url = 'mongodb://justinmongo:aFoolishPass4Mongo@ds251845.mlab.com:51845/test-db-personal-website';
+    MongoClient.connect(url, (err, database) => {
+        if (err) return console.log(err)
+
+        db = database
+        app.listen(3000, () => {
+            console.log('listening on 3000')
+        })
+    })
+    
     /////////////////////////////trivia requests/////////////////////////////////////
 
     var meals = [
@@ -133,33 +147,19 @@ module.exports = function (app) {
         }
     ]
 
-    function gatherAccountMealData(accountNumber) {
-
-        let account = AccountDatabase.find(function (account) {
-            return account.id == parseInt(accountNumber);
-        })
-
-        console.log(account.name + " id(" + parseInt(accountNumber) + ") Requested meal data")
-
-        let returnMeals = []
-
-        for (let i = 0; i <  account.mealNumbers.length; i++) {
-            returnMeals = returnMeals.concat(
-                meals.find(function (meal) {
-                    return meal.id == parseInt(account.mealNumbers[i]);
-                })
-            )
-        }
-        return returnMeals;
-    }
 
     app.get("/getMeal", function (req, res) {
         console.log("Getting Meal: " + req.query.mealId);
 
-        //Add vote to system
+        var meals_db = {}
+        db.collection('meals').find({}).toArray(function (err, results) {
+            console.log(results)
+            meals_db = results
+
+                    //Add vote to system
         try {
             var mealNumber = req.query.mealId;
-            meals.find(function (meal) {
+            meals_db.find(function (meal) {
                 if (meal.id == parseInt(mealNumber)) {
                     return res.send({ meal: meal});
                 }
@@ -169,14 +169,18 @@ module.exports = function (app) {
             console.log("ERROR! " + error)
             console.log("Cannot find MealNumber")
         }
-
+        })
     });
 
     app.get('/CurrentMealOfferings', function (req, res) {
-        res.send({ "meals": meals })
+        db.collection('meals').find({}).toArray(function (err, results) {
+            console.log(results)
+            res.send({ "meals": results })
+        })
     })
 
     app.post("/newMeal", function (req, res) {
+
         let msg = req.body;
         let meal;
         let newID = Math.floor(100000000 + Math.random() * 900000000);
@@ -194,7 +198,16 @@ module.exports = function (app) {
             meal = msg.meal;
             newID = msg.meal.id;
         }
-        meals = meals.concat([meal]);
+
+        
+        db.collection('meals').save(meal, (err, result) => {
+            if (err) return console.log(err)
+
+            console.log('saved to database')
+            console.log(req.body)
+        })
+
+        //meals = meals.concat([meal]);
         res.send({ "id": newID })
     })
 
@@ -203,14 +216,45 @@ module.exports = function (app) {
         //default response
         if (req.query.account == "undefined" || req.query.account == "") {
             console.log("default Call")
-            res.send({ "meals": meals })
+
+            db.collection('meals').find().toArray(function (err, results) {
+                res.send({ "meals": results })
+            })
         }
 
         //Search for account
         else {
             try {
-                let accountMealPlan = gatherAccountMealData(req.query.account)
-                res.send({ "meals": accountMealPlan })
+                var accountNumber = req.query.account
+
+                meals_db = {}
+                db.collection('meals').find().toArray(function (err, results) {
+                    meals_db = results;
+
+                    account_db = {}
+                    db.collection('clientAccounts').find().toArray(function (err, results) {
+                        account_db = results;
+
+
+                        let account = account_db.find(function (account) {
+                            return account.id == parseInt(accountNumber);
+                        })
+                
+                        console.log(account.name + " id(" + parseInt(accountNumber) + ") Requested meal data")
+                
+                        let returnMeals = []
+                
+                        for (let i = 0; i <  account.mealNumbers.length; i++) {
+                            returnMeals = returnMeals.concat(
+                                meals_db.find(function (meal) {
+                                    return meal.id == parseInt(account.mealNumbers[i]);
+                                })
+                            )
+                        }
+                        
+                        res.send({ "meals": returnMeals })
+                    })
+                })
             }
             catch (error) {
                 console.log("ERROR! " + error)
@@ -235,25 +279,39 @@ module.exports = function (app) {
 
         res.send({ message: "Update recieved" });
 
-        //Add vote to system
-        try {
-            meals.find(function (meal) {
-                if (meal.id == parseInt(msg.meal.id)) {
-                    meal.name = msg.meal.name
-                    meal.imageLink = msg.meal.imageLink
-                    meal.description = msg.meal.description
-                    meal.contents = msg.meal.contents
-                    meal.quantity = msg.meal.quantity
-                }
-                return;
-            })
-        }
-        catch (error) {
-            console.log("ERROR! " + error)
-            console.log("Cannot find mealNumber")
-        }
+        var myquery = { id: parseInt(msg.meal.id) };
+        var newvalues = { $set: {
+            name: msg.meal.name,
+            imageLink: msg.meal.imageLink,
+            description: msg.meal.description,
+            contents: msg.meal.contents,
+            quantity: msg.meal.quantity,
+            }};
+        db.collection("meals").updateOne(myquery, newvalues, function(err, res) {
+          if (err) throw err;
+          console.log("1 document updated");
+        });
 
-        console.log(meals)
+
+        // //Add vote to system
+        // try {
+        //     meals.find(function (meal) {
+        //         if (meal.id == parseInt(msg.meal.id)) {
+        //             meal.name = msg.meal.name
+        //             meal.imageLink = msg.meal.imageLink
+        //             meal.description = msg.meal.description
+        //             meal.contents = msg.meal.contents
+        //             meal.quantity = msg.meal.quantity
+        //         }
+        //         return;
+        //     })
+        // }
+        // catch (error) {
+        //     console.log("ERROR! " + error)
+        //     console.log("Cannot find mealNumber")
+        // }
+
+        // console.log(meals)
     });
 
     app.post("/vote", function (req, res) {
@@ -264,28 +322,41 @@ module.exports = function (app) {
         res.send({ message: "Vote recieved!" });
 
 
-        //Add vote to system
-        try {
-            var accountNumber = req.query.account;
-            AccountDatabase.find(function (account) {
-                if (account.id == parseInt(accountNumber)) {
-                    account.mealVotes = account.mealVotes.concat([{
-                        name: account.name,
-                        vote: req.body.vote,
-                        mealVotedFor: req.body.mealLiked.name,
-                        mealVotedForID: req.body.mealLiked.id,
-                        time: now.format('YYYY-MM-DD HH:mm:ss Z')
-                    }])
-                }
-                return;
-            })
-        }
-        catch (error) {
-            console.log("ERROR! " + error)
-            console.log("Cannot find accountNumber")
-        }
+        account_db = {};
+        db.collection('clientAccounts').find().toArray(function (err, results) {
+            account_db = results;
 
-        console.log(AccountDatabase)
+            //Add vote to system
+            try {
+                var accountNumber = req.query.account;
+                account_db.find(function (account) {
+                    if (account.id == parseInt(accountNumber)) {
+                        account.mealVotes = account.mealVotes.concat([{
+                            name: account.name,
+                            vote: req.body.vote,
+                            mealVotedFor: req.body.mealLiked.name,
+                            mealVotedForID: req.body.mealLiked.id,
+                            time: now.format('YYYY-MM-DD HH:mm:ss Z')
+                        }])
+
+                        var myquery = { id: parseInt(req.query.account) };
+                        var newvalues = { $set: {
+                            mealVotes: account.mealVotes
+                            }};
+                        db.collection("clientAccounts").updateOne(myquery, newvalues, function(err, res) {
+                          if (err) throw err;
+                          console.log("1 document updated");
+                        });
+                    }
+                    return;
+                })
+            }
+            catch (error) {
+                console.log("ERROR! " + error)
+                console.log("Cannot find accountNumber")
+            }
+        })
+        //console.log(AccountDatabase)
     });
 
     app.post("/stocking", function (req, res) {
@@ -294,46 +365,60 @@ module.exports = function (app) {
         console.log("Account " + req.query.account + " has " + meal.quantity + " stock of: " + meal.name);
         res.send({ message: "Stocking notice recieved!" });
 
-
-        //Add/remove stocking warning
-        try {
-            var accountNumber = req.query.account;
-            AccountDatabase.find(function (account) {
-                if (account.id == parseInt(accountNumber)) {
-                    //Remove from warnings if quantity is greater than 1
-                    if(meal.quantity >= 1){
-                        for(let i =0; i < account.stockWarning.length; i++){
-                            if(account.stockWarning[i].meal == meal.name){
-                                console.log("Removed from warnings");
-                                account.stockWarning.splice(i, 1)
+        account_db = {};
+        db.collection('clientAccounts').find().toArray(function (err, results) {
+            account_db = results;
+            
+            //Add/remove stocking warning
+            try {
+                var accountNumber = req.query.account;
+                account_db.find(function (account) {
+                    if (account.id == parseInt(accountNumber)) {
+                        //Remove from warnings if quantity is greater than 1
+                        if(meal.quantity >= 1){
+                            for(let i =0; i < account.stockWarning.length; i++){
+                                if(account.stockWarning[i].meal == meal.name){
+                                    console.log("Removed from warnings");
+                                    account.stockWarning.splice(i, 1)
+                                }
                             }
                         }
-                    }
-                    //Add to warnings
-                    else {
-                        account.stockWarning = account.stockWarning.concat([{
-                            name: account.name,
-                            accountId: account.id,
-                            meal: meal.name,
-                            mealID: meal.id,
-                            mealQuantity: meal.quantity,
-                            time: now.format('YYYY-MM-DD HH:mm:ss Z')
-                        }])
-                    }
-                }
-                return;
-            })
-        }
-        catch (error) {
-            console.log("ERROR! " + error)
-            console.log("Cannot find accountNumber")
-        }
+                        //Add to warnings
+                        else {
+                            account.stockWarning = account.stockWarning.concat([{
+                                name: account.name,
+                                accountId: account.id,
+                                meal: meal.name,
+                                mealID: meal.id,
+                                mealQuantity: meal.quantity,
+                                time: now.format('YYYY-MM-DD HH:mm:ss Z')
+                            }])
+                        }
 
-        console.log(AccountDatabase)
+                        var myquery = { id: parseInt(accountNumber) };
+                        var newvalues = { $set: {
+                            stockWarning: account.stockWarning
+                            }};
+                        db.collection("clientAccounts").updateOne(myquery, newvalues, function(err, res) {
+                          if (err) throw err;
+                          console.log("1 document updated");
+                        });
+                    }
+                    return;
+                })
+            }
+            catch (error) {
+                console.log("ERROR! " + error)
+                console.log("Cannot find accountNumber")
+            }
+        })
     });
 
     app.get('/CurrentAccounts', function (req, res) {
-        res.send({ "accounts": AccountDatabase })
+        db.collection('clientAccounts').find().toArray(function (err, results) {
+            res.send({ "accounts": results })
+        })
+        // res.send({ "accounts": AccountDatabase })
     })
 
     app.post("/newAccount", function (req, res) {
@@ -354,7 +439,11 @@ module.exports = function (app) {
             newID = msg.account.id;
         } 
 
-        AccountDatabase = AccountDatabase.concat([account]);
+        db.collection('clientAccounts').save(account, (err, result) => {
+            if (err) return console.log(err)
+            console.log('saved to database')
+        })
+        //AccountDatabase = AccountDatabase.concat([account]);
         res.send({ "id": newID })
     })
 
@@ -364,25 +453,37 @@ module.exports = function (app) {
         let now = moment()
         console.log("Account: " + msg.account.id + " Will be updated");
 
+        var myquery = { id: parseInt(msg.account.id) };
+        var newvalues = { $set: {
+            name: msg.account.name,
+            mealNumbers: msg.account.mealNumbers,
+            mealVotes: msg.account.mealVotes,
+            stockWarning: msg.account.stockWarning,
+            }};
+        db.collection("clientAccounts").updateOne(myquery, newvalues, function(err, res) {
+          if (err) throw err;
+          console.log("1 document updated");
+        });
+
         res.send({ message: "Update recieved" });
 
-        //Add vote to system
-        try {
-            AccountDatabase.find(function (account) {
-                if (account.id == parseInt(msg.account.id)) {
-                    account.name = msg.account.name
-                    account.mealNumbers = msg.account.mealNumbers
-                    account.mealVotes = msg.account.mealVotes
-                    account.stockWarning = msg.account.stockWarning
-                }
-                return;
-            })
-        }
-        catch (error) {
-            console.log("ERROR! " + error)
-            console.log("Cannot find accountNumber")
-        }
+        // //Add vote to system
+        // try {
+        //     AccountDatabase.find(function (account) {
+        //         if (account.id == parseInt(msg.account.id)) {
+        //             account.name = msg.account.name
+        //             account.mealNumbers = msg.account.mealNumbers
+        //             account.mealVotes = msg.account.mealVotes
+        //             account.stockWarning = msg.account.stockWarning
+        //         }
+        //         return;
+        //     })
+        // }
+        // catch (error) {
+        //     console.log("ERROR! " + error)
+        //     console.log("Cannot find accountNumber")
+        // }
 
-        console.log(AccountDatabase)
+        // console.log(AccountDatabase)
     });
 };
