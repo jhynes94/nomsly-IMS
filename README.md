@@ -55,8 +55,7 @@ npm start
 
 ## Todo
 
-- Support Mongo Backend localy
-- Support GraphQL
+- Clean up backend (Change from array find to Database searches)
 - Remove console.log's when going into production mode
 
 ## License
