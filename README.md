@@ -1,4 +1,4 @@
-# trivia-Vue
+# nomsly-IMS
 
 Nomsly's client and frontend for gaugeing customer interaction and manageing supply chain
 
@@ -8,7 +8,7 @@ To clone and run this repository you'll need [Git](https://git-scm.com) and [Nod
 
 ```bash
 # Clone this repository
-git clone https://github.com/jhynes94/trivia-Vue
+git clone https://github.com/jhynes94/nomsly-IMS
 # Go into the repository
 cd personal-webserver
 # Install dependencies for client
@@ -37,7 +37,7 @@ This will cocurrently run a gulp file that refreshes the webpage when changes ar
 
 ```bash
 # Clone this repository
-git clone https://github.com/jhynes94/trivia-Vue
+git clone https://github.com/jhynes94/nomsly-IMS
 # Go into the repository
 cd personal-webserver
 # Install dependencies for client
