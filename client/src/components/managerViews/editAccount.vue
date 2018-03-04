@@ -152,15 +152,17 @@ export default {
     },
     getAccounts: function() {
       this.$http.get(this.apiURL + "/CurrentAccounts").then(function(response) {
-        this.currentAccounts = response.body.accounts;
+        let allCurrentAccounts = response.body.accounts;
 
         let accNum = this.accountNumber;
 
-        this.currentAccounts[0] = this.currentAccounts.find(function(account) {
+        this.currentAccounts = [{}]
+        this.currentAccounts[0] = allCurrentAccounts.find(function(account) {
           if (account.id == accNum) {
             return account;
           }
         });
+        console.log(this.currentAccounts[0])
 
         this.AccountName = this.currentAccounts[0].name;
 
