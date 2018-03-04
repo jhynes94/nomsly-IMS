@@ -13,40 +13,33 @@ module.exports = function (app) {
             console.log('listening on 3000')
         })
     })
+
+
+
+    app.get("/getMeal", getMeal);
+    app.post("/newMeal", newMeal);
+    app.get('/meals', meals);
+    app.post("/updateMeal", updateMeal);
+    app.post("/vote", vote);
+    app.post("/stocking", stocking);
+    app.get('/CurrentAccounts', CurrentAccounts);
+    app.post("/newAccount", newAccount);
+    app.post("/updateAccount", updateAccount);
+
     
-    
-    app.get("/getMeal", function (req, res) {
-        console.log("Meal request for meal id: " + req.query.mealId);
+    function getMeal (req, res) {
+        let mealId = req.query.mealId
+        console.log("Meal request for meal id: " + mealId);
 
-        var meals_db = {}
-        db.collection('meals').find({}).toArray(function (err, results) {
-            console.log(results)
-            meals_db = results
-
-        try {
-            var mealNumber = req.query.mealId;
-            meals_db.find(function (meal) {
-                if (meal.id == parseInt(mealNumber)) {
-                    return res.send({ meal: meal});
-                }
-            })
-        }
-        catch (error) {
-            console.log("ERROR! " + error)
-            console.log("Cannot find MealNumber")
-        }
+        db.collection('meals').find({id: parseInt(mealId)}).toArray(function (err, results) {
+            if(results == undefined || results == 0 || results > 1){
+                console.log("Invalid MealId Query")
+            }
+            return res.send({ meal: results[0]})
         })
-    });
+    };
 
-    app.get('/CurrentMealOfferings', function (req, res) {
-        db.collection('meals').find({}).toArray(function (err, results) {
-            console.log(results)
-            res.send({ "meals": results })
-        })
-    })
-
-    app.post("/newMeal", function (req, res) {
-
+    function newMeal(req, res) {
         let msg = req.body;
         let meal;
         let newID = Math.floor(100000000 + Math.random() * 900000000);
@@ -64,80 +57,58 @@ module.exports = function (app) {
             meal = msg.meal;
             newID = msg.meal.id;
         }
-
-        
+    
         db.collection('meals').save(meal, (err, result) => {
             if (err) return console.log(err)
 
             console.log('saved to database')
-            console.log(req.body)
         })
         res.send({ "id": newID })
-    })
+    };
 
-    app.get('/meals', function (req, res) {
+    function meals(req, res) {
+        let accountNumber = req.query.account
 
-        //default response
-        if (req.query.account == "undefined" || req.query.account == "") {
-            console.log("default Call")
+        //default response sends all meals
+        if (accountNumber == "undefined" || accountNumber == "") {
+            console.log("default call for meals")
 
             db.collection('meals').find().toArray(function (err, results) {
                 res.send({ "meals": results })
             })
         }
 
-        //Search for account
         else {
-            try {
-                var accountNumber = req.query.account
+            db.collection('clientAccounts').find({id: parseInt(accountNumber)}).toArray(function (err, results) {
+                if(results == undefined || results == 0 || results > 1){
+                    console.log("Invalid accountNumber Query")
+                    return;
+                }
 
-                meals_db = {}
+                let account = results[0];
+
                 db.collection('meals').find().toArray(function (err, results) {
-                    meals_db = results;
+                    let meals_db = results;
 
-                    account_db = {}
-                    db.collection('clientAccounts').find().toArray(function (err, results) {
-                        account_db = results;
-
-
-                        let account = account_db.find(function (account) {
-                            return account.id == parseInt(accountNumber);
-                        })
+                    console.log(account.name + " id(" + parseInt(accountNumber) + ") requested meal data")
                 
-                        console.log(account.name + " id(" + parseInt(accountNumber) + ") Requested meal data")
-                
-                        let returnMeals = []
-                
-                        for (let i = 0; i <  account.mealNumbers.length; i++) {
-                            returnMeals = returnMeals.concat(
-                                meals_db.find(function (meal) {
-                                    return meal.id == parseInt(account.mealNumbers[i]);
-                                })
-                            )
-                        }
-                        
-                        res.send({ "meals": returnMeals })
-                    })
-                })
-            }
-            catch (error) {
-                console.log("ERROR! " + error)
-                console.log("Cannot find accountNumber")
-                res.send({
-                    "meals": [{
-                        id: 000000,
-                        name: "ACCOUNT NOT FOUND",
-                        imageLink: "",
-                        description: "",
-                        contents: "",
-                        quantity: 0
-                    }]
+                    let returnMeals = []
+            
+                    for (let i = 0; i <  account.mealNumbers.length; i++) {
+                        returnMeals = returnMeals.concat(
+                            meals_db.find(function (meal) {
+                                return meal.id == parseInt(account.mealNumbers[i]);
+                            })
+                        )
+                    }
+                    
+                    res.send({ "meals": returnMeals })
                 });
-            }
+            });
         }
-    })
+    };
 
-    app.post("/updateMeal", function (req, res) {
+    function updateMeal(req, res) {
         let msg = req.body;
         console.log("Meal: " + msg.meal.id + " Will be updated");
 
@@ -155,53 +126,55 @@ module.exports = function (app) {
           if (err) throw err;
           console.log("1 document updated");
         });
-    });
+    };
 
-    app.post("/vote", function (req, res) {
+    function vote(req, res) {
         let msg = req.body;
-        let now = moment()
-        console.log("Account: " + req.query.account + " voted they " + req.body.vote + " " + req.body.mealLiked.name + " at " + now.format('YYYY-MM-DD HH:mm:ss Z'));
+        let now = moment();
+
+        var accountNumber = req.query.account;
+        var NewAccountVote = req.body.vote;
+        var NewMealLikedName = req.body.mealLiked.name;
+        var NewMealLikedId = req.body.mealLiked.id;
+
+        console.log("Account: " + accountNumber + " voted they " + NewAccountVote + " " + NewMealLikedName + " at " + now.format('YYYY-MM-DD HH:mm:ss Z'));
 
         res.send({ message: "Vote recieved!" });
-
-
-        account_db = {};
-        db.collection('clientAccounts').find().toArray(function (err, results) {
-            account_db = results;
-
-            //Add vote to system
-            try {
-                var accountNumber = req.query.account;
-                account_db.find(function (account) {
-                    if (account.id == parseInt(accountNumber)) {
-                        account.mealVotes = account.mealVotes.concat([{
-                            name: account.name,
-                            vote: req.body.vote,
-                            mealVotedFor: req.body.mealLiked.name,
-                            mealVotedForID: req.body.mealLiked.id,
-                            time: now.format('YYYY-MM-DD HH:mm:ss Z')
-                        }])
-
-                        var myquery = { id: parseInt(req.query.account) };
-                        var newvalues = { $set: {
-                            mealVotes: account.mealVotes
-                            }};
-                        db.collection("clientAccounts").updateOne(myquery, newvalues, function(err, res) {
-                          if (err) throw err;
-                          console.log("1 document updated");
-                        });
-                    }
-                    return;
-                })
+        
+        try {
+        db.collection('clientAccounts').find({id: parseInt(accountNumber)}).toArray(function (err, results) {
+            if(results == undefined || results == 0 || results > 1){
+                console.log("Invalid accountNumber Query")
+                return;
             }
-            catch (error) {
-                console.log("ERROR! " + error)
-                console.log("Cannot find accountNumber")
-            }
+            let account = results[0];
+            account.mealVotes = account.mealVotes.concat([{
+                name: account.name,
+                vote: NewAccountVote,
+                mealVotedFor: NewMealLikedName,
+                mealVotedForID: NewMealLikedId,
+                time: now.format('YYYY-MM-DD HH:mm:ss Z')
+            }]);
+            console.log("Check Here!:")
+            console.log(account.mealVotes)
+
+            var myquery = { id: parseInt(req.query.account) };
+            var newvalues = { $set: {
+                mealVotes: account.mealVotes
+                }};
+            db.collection("clientAccounts").updateOne(myquery, newvalues, function(err, res) {
+              //if (err) throw err;
+              console.log("Vote correctly added to system");
+            });
         })
-    });
+        }
+        catch (error) {
+            console.log("ERROR! " + error)
+            console.log("Cannot find accountNumber")
+        }
+    };
 
-    app.post("/stocking", function (req, res) {
+    function stocking(req, res) {
         let meal = req.body.meal;
         let now = moment()
         console.log("Account " + req.query.account + " has " + meal.quantity + " stock of: " + meal.name);
@@ -254,15 +227,15 @@ module.exports = function (app) {
                 console.log("Cannot find accountNumber")
             }
         })
-    });
+    };
 
-    app.get('/CurrentAccounts', function (req, res) {
+    function CurrentAccounts(req, res) {
         db.collection('clientAccounts').find().toArray(function (err, results) {
             res.send({ "accounts": results })
         })
-    })
+    };
 
-    app.post("/newAccount", function (req, res) {
+    function newAccount(req, res) {
         let msg = req.body;
         let account;
         let newID = Math.floor(100000000 + Math.random() * 900000000);
@@ -285,10 +258,10 @@ module.exports = function (app) {
             console.log('saved to database')
         })
         res.send({ "id": newID })
-    })
+    }
 
 
-    app.post("/updateAccount", function (req, res) {
+    function updateAccount(req, res) {
         let msg = req.body;
         let now = moment()
         console.log("Account: " + msg.account.id + " Will be updated");
@@ -306,5 +279,5 @@ module.exports = function (app) {
         });
 
         res.send({ message: "Update recieved" });
-    });
+    };
 };
