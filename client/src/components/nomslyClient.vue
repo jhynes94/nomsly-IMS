@@ -112,15 +112,27 @@ export default {
       });
 
     },
+    RefreshWebpage: function(){
+      console.log("Refreshing Page")
+      //this.$router.push("client/" + this.accountNumber)
+      //window.location.href = "/#/client/" + this.accountNumber
+      //this.$forceUpdate();
+      console.log("Failed!")
+    }
   },
   created: function() {
     this.producion = process.env.NODE_ENV;
-    if (process.env.NODE_ENV === "development") {
+    if (this.producion === "development") {
       this.apiURL = "http://localhost:3000";
     }
+    else{
+      setTimeout(() => {this.RefreshWebpage()}, 1800000); //30 min
+    }
+
     console.log(this.$route.params.accountNumber);
     this.accountNumber = this.$route.params.accountNumber
     this.getMeals();
+
   }
 };
 </script>
