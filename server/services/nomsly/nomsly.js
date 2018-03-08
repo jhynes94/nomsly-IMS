@@ -101,6 +101,16 @@ module.exports = function (app) {
                             })
                         )
                     }
+                    if(account.stockWarning.length > 0){
+                        for(let i=0; i <account.stockWarning.length; i++){
+                            for(let j=0; j < returnMeals.length; j++){
+                                if(account.stockWarning[i].mealID == returnMeals[j].id){
+                                    console.log("Out of stock match")
+                                    returnMeals[j].quantity = account.stockWarning[i].mealQuantity;
+                                }
+                            }
+                        }
+                    }
                     
                     res.send({ "meals": returnMeals })
                 });
