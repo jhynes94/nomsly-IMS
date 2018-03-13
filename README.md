@@ -55,7 +55,8 @@ npm start
 
 ## Todo
 
-- Clean up backend (Change from array find to Database searches)
+- Add Axios to Front End
+- Add tests to system
 - Remove console.log's when going into production mode
 
 ## License
