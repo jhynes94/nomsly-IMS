@@ -20,23 +20,22 @@
         </div>
       </div>
 
-      
 
-      <div class="row" v-for="meal in meals">
+      <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4" v-for="meal in meals">
         <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
           <h1>{{meal.name}}</h1>
-          <img style="width: 407px; height: auto;" v-bind:src="meal.imageLink" />
+          <img style="width: 200px; height: auto;" v-bind:src="meal.imageLink" />
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-3 text-center mb-4">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4">
           <a @click="Vote('like', meal)" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/Happy-Apple.png" alt=""></a>
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 col-lg-offset-0 col-md-offset-0 col-sm-offset-0 col-xs-offset-3 text-center mb-4">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4">
           <a @click="Stock(meal)" class="btn btn-default">
             <img  v-if="meal.quantity > 0" style="width: 100%; height: auto;" src="../assets/In-Stock.png" alt="">
             <img  v-else style="width: 100%; height: auto;" src="../assets/OOS.jpg" alt="">
           </a>
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 col-lg-offset-0 col-md-offset-0 col-sm-offset-0 col-xs-offset-3 text-center mb-4">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4">
           <a @click="Vote('dislike', meal)" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/Sad-Orange.png" alt=""></a>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center mb-4">
@@ -44,9 +43,19 @@
         </div>
       </div>
 
-      <div>{{producion}} server</div>
-
     </div>
+    <footer class="col-lg-12 col-md-12 col-sm-12 page-footer font-small stylish-color-dark pt-4 mt-4">
+      <hr>
+
+      <!--Copyright-->
+      <div class="footer-copyright py-3 text-center">
+          © 2018 Copyright:
+          <a href="https://www.nomsly.com/"> Nomsly.com </a>
+          <div>{{producion}} server</div>
+      </div>
+      <!--/.Copyright-->
+
+    </footer>
   </div>
 </template>
 
