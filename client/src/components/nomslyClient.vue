@@ -20,11 +20,12 @@
         </div>
       </div>
 
-
+<div class="container">
+  <div class="row">
       <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4" v-for="meal in meals">
         <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
           <h1>{{meal.name}}</h1>
-          <img style="width: 200px; height: auto;" v-bind:src="meal.imageLink" />
+          <img style="width: auto; height: 200px" v-bind:src="meal.imageLink" />
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4">
           <a @click="Vote('like', meal)" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/Happy-Apple.png" alt=""></a>
@@ -41,6 +42,8 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center mb-4">
           <hr style="height: 7px">
         </div>
+      </div>
+      </div>
       </div>
 
     </div>
@@ -70,6 +73,7 @@ export default {
       producion: "No data",
       apiURL: "",
       accountNumber: "",
+      timeOut: 3000,
     };
   },
   methods: {
@@ -89,10 +93,12 @@ export default {
         console.log("Out of Stock! quantity: " + meal.quantity);
         meal.quantity = 0;
         this.Correct = "We'll send you more soon!";
+        setTimeout(() => {this.clearAlerts()}, this.timeOut);
       } else {
         console.log("In Stock! quantity: " + meal.quantity);
         meal.quantity = 1;
-        this.Correct = "";
+        this.Correct = "Back in Stock!";
+        setTimeout(() => {this.clearAlerts()}, this.timeOut);
       }
 
       //Send to Server
@@ -108,9 +114,11 @@ export default {
       // Send alerts
       if(theVote == 'like'){
         this.Correct = "We're glad you liked it!";
+        setTimeout(() => {this.clearAlerts()}, this.timeOut);
       }
       else if(theVote == 'dislike'){
         this.Correct = "We'll be sure to fix that for you";
+        setTimeout(() => {this.clearAlerts()}, this.timeOut);
       }
 
       //Send to Server
