@@ -23,21 +23,21 @@
 <div class="container">
   <div class="row">
       <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4" v-for="meal in meals">
-        <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
           <h1>{{meal.name}}</h1>
+        <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
           <img style="width: auto; height: 200px" v-bind:src="meal.imageLink" />
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4">
-          <a @click="Vote('like', meal)" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/Happy-Apple.png" alt=""></a>
+          <a @click="Vote('like', meal)" class="btn btn-default"><img class="img-responsive" src="../assets/Happy-Apple.png" alt=""></a>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4">
           <a @click="Stock(meal)" class="btn btn-default">
-            <img  v-if="meal.quantity > 0" style="width: 100%; height: auto;" src="../assets/In-Stock.png" alt="">
-            <img  v-else style="width: 100%; height: auto;" src="../assets/OOS.jpg" alt="">
+            <img class="img-responsive" v-if="meal.quantity > 0"  src="../assets/In-Stock.png" alt="">
+            <img class="img-responsive" v-else  src="../assets/OOS.jpg" alt="">
           </a>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4">
-          <a @click="Vote('dislike', meal)" class="btn btn-default"><img style="width: 100%; height: auto;" src="../assets/Sad-Orange.png" alt=""></a>
+          <a @click="Vote('dislike', meal)" class="btn btn-default"><img class="img-responsive" src="../assets/Sad-Orange.png" alt=""></a>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center mb-4">
           <hr style="height: 7px">
@@ -63,6 +63,9 @@
 </template>
 
 <script>
+import nomslyService from '@/services/nomslyService';
+
+
 export default {
   name: "nomslyClient",
   data() {
@@ -77,11 +80,10 @@ export default {
     };
   },
   methods: {
-    getMeals: function() {
-      this.$http.get(this.apiURL + "/meals?account=" + this.accountNumber).then(function(response) {
-        console.log(response.body.meals);
-        this.meals = response.body.meals;
-      });
+    async getMeals() {
+      let res = await nomslyService.getMeals(this.accountNumber);
+      console.log(res.data.meals)
+      this.meals = res.data.meals;
     },
     clearAlerts: function(){
       console.log("Clear Alerts")

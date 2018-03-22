@@ -7,6 +7,22 @@ export default {
         return Api().delete('/votes', credentials)
     },
 
+    getMeals (accountNumber = 0) {
+        let extension = "";
+        if(parseInt(accountNumber) != 0) {
+            extension = "?account=" + this.accountNumber;
+        }
+
+        return Api().get('/meals' + extension, {});
+    },
+
+
+
+
+
+
+
+
 
     FakePostRequest (credentials) {
         return Api().post('/TempData', credentials)

@@ -83,7 +83,7 @@
 <script>
 import nomslyNav from "./nomslyNav.vue";
 import LineChart2 from './LineChart2.js';
-import AuthenticationService from '@/services/AuthenticationService';
+import nomslyService from '@/services/nomslyService';
 
 
 export default {
@@ -178,7 +178,7 @@ export default {
       });
     },
     async deleteAllVotes() {
-      await AuthenticationService.deleteAllVotes();
+      await nomslyService.deleteAllVotes();
       this.getMeals();
     },
     generateChartData: function() {
