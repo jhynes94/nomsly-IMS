@@ -9,6 +9,7 @@
         <p></p>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
+        <h3><a class="btn btn-danger" @click="deleteAllVotes()" style="color: yellow;">Delete all likes/dislikes</a></h3>
         <hr>
       </div>
     </div>
@@ -82,6 +83,7 @@
 <script>
 import nomslyNav from "./nomslyNav.vue";
 import LineChart2 from './LineChart2.js';
+import AuthenticationService from '@/services/AuthenticationService';
 
 
 export default {
@@ -174,6 +176,10 @@ export default {
           console.log("New Meal ID: " + response.body.id);
           this.$router.push("/editMeal/" + response.body.id)
       });
+    },
+    async deleteAllVotes() {
+      await AuthenticationService.deleteAllVotes();
+      this.getMeals();
     },
     generateChartData: function() {
       //Create array of current meals

@@ -25,6 +25,8 @@ module.exports = function (app) {
     app.get('/CurrentAccounts', CurrentAccounts);
     app.post("/newAccount", newAccount);
     app.post("/updateAccount", updateAccount);
+    app.delete("/Account", deleteAccount);
+    app.delete("/votes", deleteAllVotes);
 
     
     function getMeal (req, res) {
@@ -290,4 +292,20 @@ module.exports = function (app) {
 
         res.send({ message: "Update recieved" });
     };
+    
+    function deleteAccount(req, res){
+
+    }
+
+    function deleteAllVotes(req, res){
+        var myquery = {};
+        var newvalues = { $set: {
+            mealVotes: []
+            }};
+        db.collection("clientAccounts").updateMany(myquery, newvalues, function(err, res) {
+          if (err) throw err;
+          console.log("all document updated");
+        });
+        res.send({ message: "Update recieved" });
+    }
 };
