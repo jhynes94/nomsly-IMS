@@ -25,18 +25,18 @@
       <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4" v-for="meal in meals">
           <h1>{{meal.name}}</h1>
         <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
-          <img style="width: auto; height: 200px" v-bind:src="meal.imageLink" />
+          <img class="img-responsive" v-bind:src="meal.imageLink" />
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4 special-button">
           <a @click="Vote('like', meal)" class="btn btn-default"><img class="img-responsive" src="../assets/Happy-Apple.png" alt=""></a>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4 special-button">
           <a @click="Stock(meal)" class="btn btn-default">
             <img class="img-responsive" v-if="meal.quantity > 0"  src="../assets/In-Stock.png" alt="">
             <img class="img-responsive" v-else  src="../assets/OOS.jpg" alt="">
           </a>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4 special-button">
           <a @click="Vote('dislike', meal)" class="btn btn-default"><img class="img-responsive" src="../assets/Sad-Orange.png" alt=""></a>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center mb-4">
@@ -163,7 +163,10 @@ export default {
   border-color: grey;
   border-radius: 15px;
   box-shadow: 0 9px #999;
-  margin-bottom: 30px;
+}
+.special-button {
+  padding-right: 3px;
+  padding-left: 3px;
 }
 .btn-default:hover {
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -174,6 +177,12 @@ export default {
 .btn-default:active {
   box-shadow: 0 5px #666;
   transform: translateY(4px);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  width:100%; /*not always necessary*/
 }
 </style>
 
