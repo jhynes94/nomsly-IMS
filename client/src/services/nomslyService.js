@@ -7,34 +7,15 @@ export default {
         return Api().delete('/votes', credentials)
     },
 
-    getMeals (accountNumber = 0) {
-        let extension = "";
-        if(parseInt(accountNumber) != 0) {
-            extension = "?account=" + this.accountNumber;
-        }
-
-        return Api().get('/meals' + extension, {});
-    },
-
-
-
-
-
-
-
-
-
-    FakePostRequest (credentials) {
-        return Api().post('/TempData', credentials)
-    },
-
-    getTempData (params) {
-        return Api().get('TempData', {
-          params: params
-        })
-      },
 
     getMeals (accountNumber){
         return Api().get('/meals?account=' + accountNumber, {})
+    },
+
+    stocking (accountNumber, meal) {
+        let extension = "";
+        extension = "?account=" + this.accountNumber;
+
+        return Api().post('/stocking' + extension, {meal});
     },
 }

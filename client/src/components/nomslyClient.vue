@@ -2,6 +2,7 @@
   <div>
     <div class="col-lg-12">
 
+      <!-- Navigation Bar -->
       <nav v-if="Correct != '' || Correct != ''" class="navbar navbar-default navbar-fixed-top">
         <div class="container">
           <div v-if="Correct != ''" class="alert alert-success" role="alert">
@@ -20,36 +21,38 @@
         </div>
       </div>
 
-<div class="container">
-  <div class="row">
-      <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4" v-for="meal in meals">
-          <h1>{{meal.name}}</h1>
-        <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
-          <img class="img-responsive" v-bind:src="meal.imageLink" />
+      <!-- Meal Loop -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4" v-for="meal in meals">
+            <h1>{{meal.name}}</h1>
+            <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
+              <img class="img-responsive" v-bind:src="meal.imageLink" />
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4 special-button">
+              <a @click="Vote('like', meal)" class="btn btn-default"><img class="img-responsive" src="../assets/Happy-Apple.png" alt=""></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4 special-button">
+              <a @click="Stock(meal)" class="btn btn-default">
+                <img class="img-responsive" v-if="meal.quantity > 0"  src="../assets/In-Stock.png" alt="">
+                <img class="img-responsive" v-else  src="../assets/OOS.jpg" alt="">
+              </a>
+              <a @click="details(meal)" class="btn btn-default glyphicon glyphicon-scale" style="color: green; font-size: 20px;"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4 special-button">
+              <a @click="Vote('dislike', meal)" class="btn btn-default"><img class="img-responsive" src="../assets/Sad-Orange.png" alt=""></a>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center mb-4">
+              <hr style="height: 7px">
+            </div>
+          </div>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4 special-button">
-          <a @click="Vote('like', meal)" class="btn btn-default"><img class="img-responsive" src="../assets/Happy-Apple.png" alt=""></a>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4 special-button">
-          <a @click="Stock(meal)" class="btn btn-default">
-            <img class="img-responsive" v-if="meal.quantity > 0"  src="../assets/In-Stock.png" alt="">
-            <img class="img-responsive" v-else  src="../assets/OOS.jpg" alt="">
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center mb-4 special-button">
-          <a @click="Vote('dislike', meal)" class="btn btn-default"><img class="img-responsive" src="../assets/Sad-Orange.png" alt=""></a>
-        </div>
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center mb-4">
-          <hr style="height: 7px">
-        </div>
-      </div>
-      </div>
       </div>
 
     </div>
+    
     <footer class="col-lg-12 col-md-12 col-sm-12 page-footer font-small stylish-color-dark pt-4 mt-4">
       <hr>
-
       <!--Copyright-->
       <div class="footer-copyright py-3 text-center">
           © 2018 Copyright:
@@ -57,7 +60,6 @@
           <div>{{producion}} server</div>
       </div>
       <!--/.Copyright-->
-
     </footer>
   </div>
 </template>
@@ -90,7 +92,7 @@ export default {
       this.Correct = "";
       this.Incorrect = "";
     },
-    Stock: function(meal) {
+    async Stock(meal) {
       if (meal.quantity > 0) {
         console.log("Out of Stock! quantity: " + meal.quantity);
         meal.quantity = 0;
@@ -104,11 +106,13 @@ export default {
       }
 
       //Send to Server
-      this.$http
+      let res = await nomslyService.stocking(this.accountNumber, meal);
+      console.log(res)
+      /*this.$http
         .post(this.apiURL + "/stocking?account=" + this.accountNumber, {meal: meal})
         .then(function(response) {
           console.log(response);
-      });
+      });*/
 
     },
     Vote: function(theVote, meal) {
