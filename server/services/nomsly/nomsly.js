@@ -26,7 +26,9 @@ module.exports = function (app) {
     app.post("/newAccount", newAccount);
     app.post("/updateAccount", updateAccount);
     app.delete("/Account", deleteAccount);
-    app.delete("/votes", deleteAllVotes);
+    app.delete("/deleteAllVotes", deleteAllVotes);
+    app.delete("/vote", deleteVote);
+    app.delete("/removeMeal", removeMeal);
 
     
     function getMeal (req, res) {
@@ -50,6 +52,7 @@ module.exports = function (app) {
                 id: newID,
                 name: "New Meal",
                 imageLink: "",
+                nutritionLink: "",
                 description: "",
                 contents: "",
                 quantity: 1
@@ -67,6 +70,25 @@ module.exports = function (app) {
         })
         res.send({ "id": newID })
     };
+
+
+
+    function removeMeal(req, res){
+        let msg = req.body;
+        console.log("Meal: " + msg.meal.id + " Will be removed");
+
+        res.send({ message: "remove recieved" });
+
+        var myquery = { id: parseInt(msg.meal.id) };
+        db.collection("meals").remove(myquery, {justOne: true}, function(err, res) {
+          if (err) throw err;
+          console.log("Meal removed");
+        });
+    }
+
+    function deleteVote(req, res){
+        
+    }
 
     function meals(req, res) {
         let accountNumber = req.query.account
@@ -130,6 +152,7 @@ module.exports = function (app) {
         var newvalues = { $set: {
             name: msg.meal.name,
             imageLink: msg.meal.imageLink,
+            nutritionLink: msg.meal.nutritionLink,
             description: msg.meal.description,
             contents: msg.meal.contents,
             quantity: msg.meal.quantity,

@@ -8,8 +8,11 @@
         <h1><input style="text-align: center;" v-model="currentMeal.name" placeholder="Meal Name"></h1>
         <h2><textarea style="text-align: center;" v-model="currentMeal.description" placeholder="Description of meal"></textarea></h2>
         <h2><textarea style="text-align: center;" v-model="currentMeal.contents" placeholder="Contents of Meal (Seprated by commas)"></textarea></h2>
-        <h3><input style="text-align: center;" v-model="currentMeal.imageLink" placeholder="Link to image"></h3>
+        <h3>Image Link: <input style="text-align: center;" v-model="currentMeal.imageLink" placeholder="Link to image"></h3>
+        <h3>Nutrition Link: <input style="text-align: center;" v-model="currentMeal.nutritionLink" placeholder="Link to Nutrition image"></h3>
         <a @click="updateMeal(currentMeal)" class="btn btn-primary">Update</a>
+        <hr>
+        <a @click="deleteMeal(currentMeal)" class="btn btn-danger">Delete Meal</a>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
         <hr>

@@ -4,9 +4,8 @@ export default {
 
 
     deleteAllVotes (credentials) {
-        return Api().delete('/votes', credentials)
+        return Api().delete('/deleteAllVotes', credentials)
     },
-
 
     getMeals (accountNumber){
         return Api().get('/meals?account=' + accountNumber, {})

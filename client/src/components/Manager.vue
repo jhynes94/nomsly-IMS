@@ -62,7 +62,8 @@
         <h1>Table of likes/dislikes</h1>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4"  v-for="vote in AllVotes">
-        <h3>{{vote.name}} voted they {{vote.vote}} "{{vote.mealVotedFor}}" at: {{vote.time}}</h3>
+        <h3>{{vote.name}} voted they {{vote.vote}} "{{vote.mealVotedFor}}" at: {{vote.time}}
+        <a @click="deleteVote(vote)" class="btn btn-danger glyphicon glyphicon-remove"></a></h3>
       </div>
       <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4"  v-if="AllVotes.length == 0">
         <h3 style="color: green;">No likes or Dislikes to show at this time</h3>
@@ -102,8 +103,8 @@ export default {
   methods: {
     getMeals: function() {
       this.$http.get(this.apiURL + "/meals?account=" + this.accountNumber).then(function(response) {
-        console.log("Current Meals available");
-        console.log(response.body.meals);
+        //console.log("Current Meals available");
+        //console.log(response.body.meals);
         this.currentMeals = response.body.meals;
 
         this.getAccounts();
@@ -113,8 +114,8 @@ export default {
       this.$http
         .get(this.apiURL + "/CurrentAccounts")
         .then(function(response) {
-          console.log("Current Accounts");
-          console.log(response.body.accounts);
+          //console.log("Current Accounts");
+          //console.log(response.body.accounts);
           this.currentAccounts = response.body.accounts;
 
           //Gather all votes
@@ -122,8 +123,8 @@ export default {
           for(let i=0; i < this.currentAccounts.length; i++){
             this.AllVotes = this.AllVotes.concat(this.currentAccounts[i].mealVotes);
           }
-          console.log("All current Votes")
-          console.log(this.AllVotes)
+          //console.log("All current Votes")
+          //console.log(this.AllVotes)
           this.generateChartData();
 
           //Gather all Warnings
@@ -131,8 +132,8 @@ export default {
           for(let i=0; i < this.currentAccounts.length; i++){
             this.AllWarnings = this.AllWarnings.concat(this.currentAccounts[i].stockWarning);
           }
-          console.log("All Warnings")
-          console.log(this.AllWarnings)
+          //console.log("All Warnings")
+          //console.log(this.AllWarnings)
         });
     },
     updateAccount: function(inputAccount) {
@@ -142,6 +143,17 @@ export default {
           console.log(response);
           this.getAccounts();
       });
+    },
+    deleteVote: function(vote){
+      for(let i=0; i < this.currentAccounts.length; i++){
+        for(let j=0; j< this.currentAccounts[i].mealVotes.length; j++){
+          if(this.currentAccounts[i].mealVotes[j] == vote){
+            console.log("Found " + this.currentAccounts[i].mealVotes[j])
+            this.currentAccounts[i].mealVotes.splice(j, 1)
+            this.updateAccount(this.currentAccounts[i])
+          }
+        }
+      }
     },
     removeWarning: function(inputWarning) {
       //Find account
