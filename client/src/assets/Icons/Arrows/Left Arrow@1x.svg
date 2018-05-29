@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="87px" height="87px" viewBox="0 0 87 87" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>Left Arrow@1x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="More-Info" transform="translate(-41.000000, -373.000000)">
+            <g id="Left-Arrow" transform="translate(41.000000, 373.000000)">
+                <circle id="Oval-3" fill="#F59433" cx="43.5" cy="43.5" r="43.5"></circle>
+                <path d="M43.1724138,34.9310401 L56.1724138,48.5810401 C57.3150719,49.7808311 57.2687565,51.6797613 56.0689655,52.8224194 C55.5111406,53.3536812 54.7703296,53.6500056 54,53.6500056 L28,53.6500056 C26.3431458,53.6500056 25,52.3068598 25,50.6500056 C25,49.879676 25.2963244,49.138865 25.8275862,48.5810401 L38.8275862,34.9310401 C39.9702443,33.7312491 41.8691745,33.6849337 43.0689655,34.8275918 C43.1042841,34.8612285 43.1387771,34.8957215 43.1724138,34.9310401 Z" id="Triangle" fill="#FFFFFF" transform="translate(41.000003, 43.825003) scale(-1, 1) rotate(90.000000) translate(-41.000003, -43.825003) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

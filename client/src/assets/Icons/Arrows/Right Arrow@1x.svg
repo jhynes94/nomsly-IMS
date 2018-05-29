@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="87px" height="87px" viewBox="0 0 87 87" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>Right Arrow@1x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="More-Info" transform="translate(-1136.000000, -373.000000)">
+            <g id="Right-Arrow" transform="translate(1136.000000, 373.000000)">
+                <circle id="Oval-3" fill="#F59433" cx="43.5" cy="43.5" r="43.5"></circle>
+                <path d="M48.1724138,34.9310401 L61.1724138,48.5810401 C62.3150719,49.7808311 62.2687565,51.6797613 61.0689655,52.8224194 C60.5111406,53.3536812 59.7703296,53.6500056 59,53.6500056 L33,53.6500056 C31.3431458,53.6500056 30,52.3068598 30,50.6500056 C30,49.879676 30.2963244,49.138865 30.8275862,48.5810401 L43.8275862,34.9310401 C44.9702443,33.7312491 46.8691745,33.6849337 48.0689655,34.8275918 C48.1042841,34.8612285 48.1387771,34.8957215 48.1724138,34.9310401 Z" id="Triangle" fill="#FFFFFF" transform="translate(46.000003, 43.825003) rotate(90.000000) translate(-46.000003, -43.825003) "></path>
+            </g>
+        </g>
+    </g>
+</svg>
