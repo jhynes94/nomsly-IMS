@@ -11,6 +11,7 @@
           <div class="row">
             <div class="col-lg-12" style="margin-bottom: 25px">
               <h3>Edits will be added here</h3>
+              <img style="width: 100%; height: auto;" v-bind:src="globalNutritionLink" alt="">
             </div>
           </div>
         </div>
@@ -36,9 +37,9 @@
       <!-- SPACER ROW -->
       <div class="row">
         <div class="col-lg-3" style="margin-bottom: 25px">
-          <img style="width: 100%; height: auto;" src="../assets/Nomsly-Logo.png" alt="">
+          <img style="width: 100%; height: auto;" src="../assets/Icons/Logo/logonb.png" alt="">
         </div>
-        <div class="col-lg-9" style="margin-top: 15px; color: black;">
+        <div class="col-lg-9">
           <h3><span v-for="filter in filters"><b><button @click="filterResults(filter)" class="top-button">{{filter}}</button></b></span></h3>
         </div>
         <div class="col-lg-12" style="margin-bottom: 25px">
@@ -49,7 +50,7 @@
       <!-- Meal Loop -->
       <div class="container">
         <div class="row">
-          <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4" v-for="meal in meals">
+          <div class="col-lg-4 col-md-4 col-sm-4 text-center mb-4" v-for="meal in filteredMeals">
             <div class="col-lg-12 col-md-12 col-sm-12 text-center mb-4">
               <img class="img-responsive" v-bind:src="meal.imageLink" />
             </div>
@@ -105,6 +106,7 @@ export default {
   data() {
     return {
       meals: "",
+      filteredMeals: "",
       Incorrect: "",
       filters: ["ALL", "POPULAR", "VEGETARIAN", "VEGAN", "GLUTEN FREE", "HIGH-PROTIEN"],
       Correct: "",
@@ -120,6 +122,7 @@ export default {
       let res = await nomslyService.getMeals(this.accountNumber);
       console.log(res.data.meals);
       this.meals = res.data.meals;
+      this.filteredMeals = this.meals
     },
     clearAlerts: function() {
       console.log("Clear Alerts");
@@ -165,10 +168,26 @@ export default {
       document.getElementById("myNav").style.width = "0%";
     },
     filterResults: function(filter) {
-      this.Correct = "Filtering of " + filter + " results will be added soon";
-      setTimeout(() => {
-        this.clearAlerts();
-      }, this.timeOut);
+      if(filter == "ALL"){
+        this.filteredMeals = this.meals
+      }
+      else{
+          this.filteredMeals = [];
+          for(let i=0; i < this.meals.length; i++){
+            if(this.meals[i].attributes == undefined){
+              this.meals[i].attributes = [];
+            }
+            else {
+              console.log(this.meals[i].name)
+              if(this.meals[i].attributes.includes(filter)){
+                console.log("Filter??")
+                this.filteredMeals = this.filteredMeals.concat(this.meals[i])
+              }
+            }
+          }
+
+          //var filteredKeywords = fullWordList.filter((word) => !wordsToRemove.includes(word));
+      }
     },
     Vote: function(theVote, meal) {
       // Send alerts
@@ -215,45 +234,6 @@ export default {
     console.log(this.$route.params.accountNumber);
     this.accountNumber = this.$route.params.accountNumber;
     this.getMeals();
-
-    this.meals = [
-      {
-        id: 1,
-        name: "Arabian Nights",
-        imageLink: "../assets/thumbs-up-hi.png",
-        description:
-          "Grilled Chicken Pita Pocket with Hummus and Dried Apricots",
-        contents: "Wheat, Soy",
-        quantity: 1
-      },
-      {
-        id: 2,
-        name: "Brunch for Lunch",
-        imageLink: "",
-        description:
-          "Mini Pancakes, Chicken Sausage, and Vanilla Yogurt, with Carrot Sticks and Apples",
-        contents: "Wheat, Dairy",
-        quantity: 1
-      },
-      {
-        id: 3,
-        name: "Falalala",
-        imageLink: "",
-        description:
-          "Falafel and Tzatziki Sauce with Blueberries and Cucumber Sticks",
-        contents: "Wheat, Dairy",
-        quantity: 1
-      },
-      {
-        id: 4,
-        name: "Fiesta",
-        imageLink: "",
-        description:
-          "Whole Wheat, Black Bean, and Edamame Quesadilla with Apple Slices and Corn",
-        contents: "Wheat, Dairy, Soy",
-        quantity: 1
-      }
-    ];
   }
 };
 </script>
@@ -282,9 +262,10 @@ export default {
 }
 
 .top-button {
-  margin-right: 4px;
+  margin-right: 8px;
   background-color: white;
   border: white;
+  color: black;
 }
 .top-button:hover {
     border-bottom: 10px solid orange;

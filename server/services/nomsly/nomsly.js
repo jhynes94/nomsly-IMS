@@ -156,6 +156,7 @@ module.exports = function (app) {
             description: msg.meal.description,
             contents: msg.meal.contents,
             quantity: msg.meal.quantity,
+            attributes: msg.meal.attributes,
             }};
         db.collection("meals").updateOne(myquery, newvalues, function(err, res) {
           if (err) throw err;
